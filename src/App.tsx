@@ -27,7 +27,11 @@ function App() {
   const onSubmitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (notUser) setNotUser(false);
-    if (userData.date !== `${import.meta.env.VITE_EXPECT_ANS}`) {
+    if (
+      userData.date !== `${import.meta.env.VITE_EXPECT_ANS_ONE}` &&
+      userData.date !== `${import.meta.env.VITE_EXPECT_ANS_TWO}` &&
+      userData.date !== `${import.meta.env.VITE_EXPECT_ANS_THREE}`
+    ) {
       setNotUser(true);
       if (nameRef.current != null && dateRef.current != null) {
         nameRef.current.value = '';
