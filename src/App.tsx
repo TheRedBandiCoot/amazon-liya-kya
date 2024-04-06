@@ -297,6 +297,7 @@ function App() {
               <IoIosArrowBack
                 onClick={() => {
                   setIsUser(false);
+                  setCount(0);
                   setPosition({
                     top: `0`,
                     right: `0`
