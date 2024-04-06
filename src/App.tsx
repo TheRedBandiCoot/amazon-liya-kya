@@ -118,6 +118,11 @@ function App() {
       return;
     }
     toast.dismiss(toastId);
+    window.scrollTo({
+  top: 0,
+  left: 0,
+  behavior: "smooth",
+});
     setIsUser(true);
   };
 
