@@ -85,6 +85,9 @@ function App() {
   const [notUser, setNotUser] = useState<boolean>(false);
   const [imgErr, setImgErr] = useState<boolean>(false);
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
+  const [isLoadingOnSignIn, setIsLoadingOnSignIn] = useState<boolean>(false);
+  const [isSignInBtnDisabled, setIsSignInBtnDisabled] =
+    useState<boolean>(false);
   const [count, setCount] = useState<number>(0);
   const [toastId, setToastId] = useState<string>('');
   const [position, setPosition] = useState({
@@ -119,10 +122,10 @@ function App() {
     }
     toast.dismiss(toastId);
     window.scrollTo({
-  top: 0,
-  left: 0,
-  behavior: "smooth",
-});
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
     setIsUser(true);
   };
 
@@ -165,9 +168,11 @@ function App() {
   };
 
   const onSignInHandler = async () => {
+    setIsSignInBtnDisabled(true);
     try {
       const provider = new GoogleAuthProvider();
       const { user: authUser } = await signInWithPopup(auth, provider);
+      setIsLoadingOnSignIn(true);
       const res = await createUser({
         _id: authUser.uid,
         email: authUser.email!,
@@ -176,9 +181,9 @@ function App() {
         role: 'user'
       });
       if ('data' in res) {
-        toast.success(res.data.message);
         const data = await getUser(authUser.uid);
         dispatch(userExist(data.user));
+        toast.success(res.data.message);
         if (data.success && data.user.role === 'user')
           toast.custom(
             t => {
@@ -206,6 +211,9 @@ function App() {
       }
     } catch (error) {
       toast.error('SignIn Failed');
+    } finally {
+      setIsLoadingOnSignIn(false);
+      setIsSignInBtnDisabled(false);
     }
   };
 
@@ -293,7 +301,7 @@ function App() {
   if (isError) console.log(error);
   return (
     <>
-      {loading ? (
+      {loading || isLoadingOnSignIn ? (
         <Loader />
       ) : (
         <>
@@ -365,7 +373,12 @@ function App() {
                   )}
                 </div>
               ) : (
-                <button className="signIn-btn" onClick={onSignInHandler}>
+                <button
+                  disabled={isSignInBtnDisabled}
+                  className="signIn-btn"
+                  onClick={onSignInHandler}
+                >
+                  {isSignInBtnDisabled && <div className="backdrop" />}
                   <FcGoogle /> <span>Sign in with Gooooooogle</span>
                 </button>
               )}
